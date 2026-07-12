@@ -530,6 +530,16 @@ function lib:init(opts)
                 bArgs = bArgs or {}
                 local bTxt = bArgs.Name or "Button"
                 local cb = bArgs.Callback or function() end
+                local isPrem = string.find(string.upper(bTxt), "PREMIUM") ~= nil
+                local txtCol = isPrem and colors.goldc or colors.sub
+                local oldCb = cb
+                cb = function(...)
+                    if isPrem and not _G.ownsPremiumLoader then
+                        lib:ShowPremiumPopup()
+                        return
+                    end
+                    return oldCb(...)
+                end
 
                 local b = c("TextButton", {
                     Parent = sec,
@@ -552,24 +562,28 @@ function lib:init(opts)
                     tw:Create(b, TweenInfo.new(0.1), {Size = UDim2.new(1, 0, 0, 32)}):Play()
                     cb()
                 end)
-            end\n
-                local isPrem = string.find(string.upper(bTxt), "%[PREMIUM%]") ~= nil
-                local txtCol = isPrem and colors.goldc or colors.sub
-                local oldCb = cb
-                cb = function(...)
-                    if isPrem and not _G.ownsPremiumLoader then
-                        lib:ShowPremiumPopup()
-                        return
-                    end
-                    return oldCb(...)
-                end
-
+            end
 
             function s:tog(tArgs)
                 tArgs = tArgs or {}
                 local tTxt = tArgs.Name or "Toggle"
                 local def = tArgs.Default or false
                 local cb = tArgs.Callback or function() end
+                local isPrem = string.find(string.upper(tTxt), "PREMIUM") ~= nil
+                local txtCol = isPrem and colors.goldc or colors.sub
+                local oldCb = cb
+                local state
+                local up
+                cb = function(...)
+                    if isPrem and not _G.ownsPremiumLoader then
+                        -- flip state back visually if it was changed
+                        state = not state
+                        up(true)
+                        lib:ShowPremiumPopup()
+                        return
+                    end
+                    return oldCb(...)
+                end
                 
                 local f = c("Frame", {
                     Parent = sec,
@@ -619,9 +633,9 @@ function lib:init(opts)
                     Text = ""
                 })
 
-                local state = def
+                state = def
                 
-                local function up(anim)
+                up = function(anim)
                     local pos = state and UDim2.new(0, 20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
                     local col = state and colors.goldc or colors.sub
                     if anim then
@@ -638,8 +652,16 @@ function lib:init(opts)
                     up(true)
                     cb(state)
                 end)
-            end\n
-                local isPrem = string.find(string.upper(tTxt), "%[PREMIUM%]") ~= nil
+            end
+
+            function s:sldr(slArgs)
+                slArgs = slArgs or {}
+                local slTxt = slArgs.Name or "Slider"
+                local min = slArgs.Min or 0
+                local max = slArgs.Max or 100
+                local def = slArgs.Default or min
+                local cb = slArgs.Callback or function() end
+                local isPrem = string.find(string.upper(slTxt), "PREMIUM") ~= nil
                 local txtCol = isPrem and colors.goldc or colors.sub
                 local oldCb = cb
                 cb = function(...)
@@ -649,15 +671,6 @@ function lib:init(opts)
                     end
                     return oldCb(...)
                 end
-
-
-            function s:sldr(slArgs)
-                slArgs = slArgs or {}
-                local slTxt = slArgs.Name or "Slider"
-                local min = slArgs.Min or 0
-                local max = slArgs.Max or 100
-                local def = slArgs.Default or min
-                local cb = slArgs.Callback or function() end
 
                 local f = c("Frame", {
                     Parent = sec,
@@ -749,17 +762,7 @@ function lib:init(opts)
                 end)
                 
                 set(def)
-            end\n
-                local isPrem = string.find(string.upper(sTxt), "%[PREMIUM%]") ~= nil
-                local txtCol = isPrem and colors.goldc or colors.sub
-                local oldCb = cb
-                cb = function(...)
-                    if isPrem and not _G.ownsPremiumLoader then
-                        lib:ShowPremiumPopup()
-                        return
-                    end
-                    return oldCb(...)
-                end
+            end
 
             
             function s:lbl(lTxt)
@@ -783,6 +786,16 @@ function lib:init(opts)
                 local options = dArgs.Options or {}
                 local default = dArgs.Default or ""
                 local cb = dArgs.Callback or function() end
+                local isPrem = string.find(string.upper(dTxt), "PREMIUM") ~= nil
+                local txtCol = isPrem and colors.goldc or colors.txt
+                local oldCb = cb
+                cb = function(...)
+                    if isPrem and not _G.ownsPremiumLoader then
+                        lib:ShowPremiumPopup()
+                        return
+                    end
+                    return oldCb(...)
+                end
                 
                 local dropApi = {}
                 
@@ -895,14 +908,3 @@ function lib:init(opts)
 end
 
 return lib\n
-                local isPrem = string.find(string.upper(dTxt), "%[PREMIUM%]") ~= nil
-                local txtCol = isPrem and colors.goldc or colors.sub
-                local oldCb = cb
-                cb = function(...)
-                    if isPrem and not _G.ownsPremiumLoader then
-                        lib:ShowPremiumPopup()
-                        return
-                    end
-                    return oldCb(...)
-                end
-
