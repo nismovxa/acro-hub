@@ -59,7 +59,8 @@ end
 function lib:init(opts)
     opts = opts or {}
     local title = opts.Title or "Acro Hub"
-    local size = opts.Size or UDim2.fromOffset(550, 400)
+    local defSize = uis.TouchEnabled and UDim2.fromOffset(550, 400) or UDim2.fromOffset(680, 480)
+    local size = opts.Size or defSize
 
     pcall(function()
         for _, v in pairs(cg:GetChildren()) do
