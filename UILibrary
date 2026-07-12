@@ -123,6 +123,46 @@ function AcroUI:CreateWindow(options)
         BorderSizePixel = 0
     })
 
+    local closeBtn = Create("TextButton", {
+        Parent = topBar,
+        AnchorPoint = Vector2.new(1, 0),
+        Position = UDim2.new(1, -12, 0, 10),
+        Size = UDim2.fromOffset(20, 20),
+        BackgroundTransparency = 1,
+        Text = "X",
+        TextColor3 = Theme.sub,
+        Font = Enum.Font.GothamBold,
+        TextSize = 13
+    })
+    closeBtn.MouseButton1Click:Connect(function()
+        gui:Destroy()
+    end)
+    closeBtn.MouseEnter:Connect(function() TweenService:Create(closeBtn, TweenInfo.new(0.15), {TextColor3 = Color3.fromRGB(230, 90, 90)}):Play() end)
+    closeBtn.MouseLeave:Connect(function() TweenService:Create(closeBtn, TweenInfo.new(0.15), {TextColor3 = Theme.sub}):Play() end)
+
+    local minBtn = Create("TextButton", {
+        Parent = topBar,
+        AnchorPoint = Vector2.new(1, 0),
+        Position = UDim2.new(1, -36, 0, 10),
+        Size = UDim2.fromOffset(20, 20),
+        BackgroundTransparency = 1,
+        Text = "-",
+        TextColor3 = Theme.sub,
+        Font = Enum.Font.GothamBold,
+        TextSize = 16
+    })
+    local minimized = false
+    minBtn.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        if minimized then
+            TweenService:Create(mainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, size.X.Offset, 0, 40)}):Play()
+        else
+            TweenService:Create(mainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = size}):Play()
+        end
+    end)
+    minBtn.MouseEnter:Connect(function() TweenService:Create(minBtn, TweenInfo.new(0.15), {TextColor3 = Theme.txt}):Play() end)
+    minBtn.MouseLeave:Connect(function() TweenService:Create(minBtn, TweenInfo.new(0.15), {TextColor3 = Theme.sub}):Play() end)
+
     MakeDraggable(topBar, mainFrame)
 
     local tabContainer = Create("Frame", {
@@ -198,12 +238,21 @@ function AcroUI:CreateWindow(options)
     Create("UICorner", {Parent = toggleBtn, CornerRadius = UDim.new(0, 6)})
     Create("UIStroke", {Parent = toggleBtn, Color = Theme.line, Thickness = 1})
     
+    toggleBtn.Visible = UserInputService.TouchEnabled
+
     local toggled = true
     toggleBtn.MouseButton1Click:Connect(function()
         toggled = not toggled
         mainFrame.Visible = toggled
     end)
     MakeDraggable(toggleBtn, toggleBtn)
+
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode.LeftControl then
+            toggled = not toggled
+            mainFrame.Visible = toggled
+        end
+    end)
 
     function Window:CreateTab(tabName)
         local tabBtn = Create("TextButton", {
