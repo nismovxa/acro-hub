@@ -443,6 +443,7 @@ function lib:init(opts)
                     TextColor3 = colors.txt,
                     Font = Enum.Font.GothamMedium,
                     TextSize = 12,
+                    TextTruncate = Enum.TextTruncate.AtEnd,
                     AutoButtonColor = false
                 })
                 c("UICorner", {Parent = b, CornerRadius = UDim.new(0, 4)})
@@ -481,6 +482,7 @@ function lib:init(opts)
                     TextColor3 = colors.txt,
                     Font = Enum.Font.GothamMedium,
                     TextSize = 12,
+                    TextTruncate = Enum.TextTruncate.AtEnd,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
 
@@ -557,6 +559,7 @@ function lib:init(opts)
                     TextColor3 = colors.txt,
                     Font = Enum.Font.GothamMedium,
                     TextSize = 12,
+                    TextTruncate = Enum.TextTruncate.AtEnd,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
 
@@ -633,12 +636,14 @@ function lib:init(opts)
             function s:lbl(lTxt)
                 c("TextLabel", {
                     Parent = sec,
-                    Size = UDim2.new(1, 0, 0, 20),
+                    Size = UDim2.new(1, 0, 0, 0),
+                    AutomaticSize = Enum.AutomaticSize.Y,
                     BackgroundTransparency = 1,
                     Text = lTxt,
                     TextColor3 = colors.sub,
                     Font = Enum.Font.Gotham,
                     TextSize = 12,
+                    TextWrapped = true,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
             end
