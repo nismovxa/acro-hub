@@ -907,4 +907,4 @@ function lib:init(opts)
     return win
 end
 
-return lib\n
+return lib
