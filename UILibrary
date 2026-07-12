@@ -1,7 +1,7 @@
 local AcroUI = {}
 AcroUI.__index = AcroUI
 
-
+-- Theme Colors based on Acro Key System
 local Theme = {
     bg = Color3.fromRGB(2, 2, 4),
     panel = Color3.fromRGB(6, 7, 10),
@@ -10,7 +10,7 @@ local Theme = {
     line = Color3.fromRGB(30, 32, 40),
     txt = Color3.fromRGB(240, 242, 248),
     sub = Color3.fromRGB(120, 124, 138),
-    goldc = Color3.fromRGB(250, 190, 90)
+    goldc = Color3.fromRGB(255, 255, 255)
 }
 
 local TweenService = game:GetService("TweenService")
@@ -68,7 +68,7 @@ end
 function AcroUI:CreateWindow(options)
     options = options or {}
     local title = options.Title or "Acro Hub"
-    local size = options.Size or UDim2.fromOffset(450, 320)
+    local size = options.Size or UDim2.fromOffset(550, 400)
 
     local gui = Create("ScreenGui", {
         Name = "AcroUI",
@@ -176,7 +176,7 @@ function AcroUI:CreateWindow(options)
         Tabs = {}
     }
     
-
+    -- Mobile Toggle Button
     local toggleBtn = Create("TextButton", {
         Parent = gui,
         Size = UDim2.fromOffset(40, 40),
