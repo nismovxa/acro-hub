@@ -750,6 +750,9 @@ function lib:init(opts)
                 end)
                 
                 dropApi:Refresh(options)
+                if default ~= nil and default ~= "" then
+                    cb(default)
+                end
                 
                 return dropApi
             end
