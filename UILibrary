@@ -101,6 +101,7 @@ function AcroUI:CreateWindow(options)
         Position = UDim2.fromScale(0.5, 0.5),
         Size = size,
         BackgroundColor3 = Theme.panel,
+        BackgroundTransparency = 0.15,
         BorderSizePixel = 0,
         ClipsDescendants = true
     })
@@ -182,6 +183,7 @@ function AcroUI:CreateWindow(options)
         Position = UDim2.fromOffset(0, 41),
         Size = UDim2.new(0, 120, 1, -41),
         BackgroundColor3 = Theme.bg,
+        BackgroundTransparency = 0.35,
         BorderSizePixel = 0
     })
     
