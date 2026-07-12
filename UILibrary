@@ -182,10 +182,18 @@ function AcroUI:CreateWindow(options)
         Size = UDim2.fromOffset(40, 40),
         Position = UDim2.new(0, 10, 0, 10),
         BackgroundColor3 = Theme.panel,
-        Text = "A",
-        TextColor3 = Theme.goldc,
-        Font = Enum.Font.GothamBold,
-        TextSize = 18
+        Text = "",
+        AutoButtonColor = false
+    })
+    local toggleIcon = Create("ImageLabel", {
+        Parent = toggleBtn,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.fromScale(0.5, 0.5),
+        Size = UDim2.fromOffset(24, 24),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://18325529279",
+        ImageColor3 = Theme.goldc,
+        ScaleType = Enum.ScaleType.Fit
     })
     Create("UICorner", {Parent = toggleBtn, CornerRadius = UDim.new(0, 6)})
     Create("UIStroke", {Parent = toggleBtn, Color = Theme.line, Thickness = 1})
