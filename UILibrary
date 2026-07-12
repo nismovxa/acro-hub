@@ -648,6 +648,111 @@ function lib:init(opts)
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
             end
+            
+            function s:drop(dArgs)
+                dArgs = dArgs or {}
+                local dTxt = dArgs.Name or "Dropdown"
+                local options = dArgs.Options or {}
+                local default = dArgs.Default or ""
+                local cb = dArgs.Callback or function() end
+                
+                local dropApi = {}
+                
+                local f = c("Frame", {
+                    Parent = sec,
+                    Size = UDim2.new(1, 0, 0, 32),
+                    BackgroundColor3 = colors.elem,
+                    BorderSizePixel = 0,
+                    ClipsDescendants = true
+                })
+                c("UICorner", {Parent = f, CornerRadius = UDim.new(0, 4)})
+                c("UIStroke", {Parent = f, Color = colors.line, Thickness = 1})
+                
+                local btn = c("TextButton", {
+                    Parent = f,
+                    Size = UDim2.new(1, 0, 0, 32),
+                    BackgroundTransparency = 1,
+                    Text = ""
+                })
+                
+                c("TextLabel", {
+                    Parent = f,
+                    Position = UDim2.fromOffset(12, 0),
+                    Size = UDim2.new(1, -24, 0, 32),
+                    BackgroundTransparency = 1,
+                    Text = dTxt .. " - " .. tostring(default),
+                    TextColor3 = colors.txt,
+                    Font = Enum.Font.GothamMedium,
+                    TextSize = 12,
+                    TextTruncate = Enum.TextTruncate.AtEnd,
+                    TextXAlignment = Enum.TextXAlignment.Left
+                })
+                
+                local listFrame = c("Frame", {
+                    Parent = f,
+                    Position = UDim2.fromOffset(0, 32),
+                    Size = UDim2.new(1, 0, 1, -32),
+                    BackgroundTransparency = 1
+                })
+                
+                local lyt = c("UIListLayout", {
+                    Parent = listFrame,
+                    SortOrder = Enum.SortOrder.LayoutOrder
+                })
+                
+                local expanded = false
+                
+                function dropApi:Refresh(newOpts)
+                    options = newOpts or {}
+                    for _, v in pairs(listFrame:GetChildren()) do
+                        if v:IsA("TextButton") then v:Destroy() end
+                    end
+                    
+                    local h = 32
+                    for i, opt in ipairs(options) do
+                        local oBtn = c("TextButton", {
+                            Parent = listFrame,
+                            Size = UDim2.new(1, 0, 0, 24),
+                            BackgroundColor3 = colors.elem,
+                            Text = tostring(opt),
+                            TextColor3 = colors.sub,
+                            Font = Enum.Font.Gotham,
+                            TextSize = 11,
+                            AutoButtonColor = false,
+                            LayoutOrder = i
+                        })
+                        
+                        oBtn.MouseEnter:Connect(function() tw:Create(oBtn, TweenInfo.new(0.15), {TextColor3 = colors.txt, BackgroundColor3 = colors.elemh}):Play() end)
+                        oBtn.MouseLeave:Connect(function() tw:Create(oBtn, TweenInfo.new(0.15), {TextColor3 = colors.sub, BackgroundColor3 = colors.elem}):Play() end)
+                        
+                        oBtn.MouseButton1Click:Connect(function()
+                            expanded = false
+                            tw:Create(f, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 32)}):Play()
+                            f.TextLabel.Text = dTxt .. " - " .. tostring(opt)
+                            cb(opt)
+                        end)
+                        h = h + 24
+                    end
+                    
+                    if expanded then
+                        tw:Create(f, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, h)}):Play()
+                    end
+                end
+                
+                btn.MouseButton1Click:Connect(function()
+                    expanded = not expanded
+                    if expanded then
+                        local h = 32 + (#options * 24)
+                        tw:Create(f, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, h)}):Play()
+                    else
+                        tw:Create(f, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 32)}):Play()
+                    end
+                end)
+                
+                dropApi:Refresh(options)
+                
+                return dropApi
+            end
 
             return s
         end
