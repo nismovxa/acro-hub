@@ -295,11 +295,14 @@ function lib:init(opts)
         end)
 
         btn.MouseButton1Click:Connect(function()
+            if page.Visible then return end
             for _, tbl in pairs(win.list) do
                 tbl.page.Visible = false
                 tw:Create(tbl.tabBtn, TweenInfo.new(0.2), {BackgroundColor3 = colors.elem, TextColor3 = colors.sub}):Play()
             end
+            page.Position = UDim2.new(0, 0, 0, 15)
             page.Visible = true
+            tw:Create(page, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
             tw:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = colors.elemh, TextColor3 = colors.txt}):Play()
         end)
         
