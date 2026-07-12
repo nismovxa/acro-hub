@@ -56,6 +56,101 @@ local function dragify(bar, obj)
     end)
 end
 
+
+function lib:ShowPremiumPopup()
+    local tw = game:GetService("TweenService")
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "\0"
+    local ok = pcall(function() gui.Parent = game:GetService("CoreGui") end)
+    if not ok then gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui") end
+    gui.IgnoreGuiInset = true
+    gui.DisplayOrder = 1001
+
+    local function mk(c, p)
+        local o = Instance.new(c)
+        for k, v in pairs(p) do o[k] = v end
+        return o
+    end
+    local function corner(p, r) mk("UICorner", {Parent = p, CornerRadius = UDim.new(0, r)}) end
+    local function strokey(p, c, t) return mk("UIStroke", {Parent = p, Color = c, Thickness = t or 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border}) end
+    
+    local panel = Color3.fromRGB(6, 7, 10)
+    local line = Color3.fromRGB(30, 32, 40)
+    local txt = Color3.fromRGB(240, 242, 248)
+    local sub = Color3.fromRGB(120, 124, 138)
+    local elem = Color3.fromRGB(14, 15, 20)
+    local elemh = Color3.fromRGB(22, 24, 30)
+    local goldc = Color3.fromRGB(250, 190, 90)
+    local puh = Color3.fromRGB(255, 255, 255)
+
+    local shade = mk("Frame", { Parent = gui, BackgroundColor3 = Color3.new(), BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), BorderSizePixel = 0 })
+    
+    local card = mk("Frame", { Parent = gui, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 16), Size = UDim2.fromOffset(360, 220), BackgroundColor3 = panel, BackgroundTransparency = 1 })
+    corner(card, 6)
+    local cards = strokey(card, line, 1)
+    cards.Transparency = 1
+
+    local logoicon = mk("ImageLabel", { Parent = card, Position = UDim2.fromOffset(16, 22), Size = UDim2.fromOffset(18, 18), BackgroundTransparency = 1, Image = "rbxassetid://18325529279", ScaleType = Enum.ScaleType.Fit, ImageTransparency = 1, ImageColor3 = goldc })
+    
+    local title = mk("TextLabel", { Parent = card, Position = UDim2.fromOffset(40, 20), Size = UDim2.new(1, -80, 0, 14), BackgroundTransparency = 1, Text = "Acro Hub Premium", TextColor3 = goldc, Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, TextTransparency = 1 })
+
+    local sublbl = mk("TextLabel", { Parent = card, Position = UDim2.fromOffset(40, 36), Size = UDim2.new(1, -80, 0, 12), BackgroundTransparency = 1, Text = "Unlock Lifetime Benefits", TextColor3 = sub, Font = Enum.Font.Gotham, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextTransparency = 1 })
+
+    local closex = mk("ImageButton", { Parent = card, AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -16, 0, 24), Size = UDim2.fromOffset(14, 14), BackgroundTransparency = 1, Image = "rbxassetid://10747384394", ImageColor3 = sub, AutoButtonColor = false, ImageTransparency = 1 })
+
+    local topline = mk("Frame", { Parent = card, Position = UDim2.fromOffset(16, 64), Size = UDim2.new(1, -32, 0, 1), BackgroundColor3 = line, BorderSizePixel = 0, BackgroundTransparency = 1 })
+
+    local infolbl = mk("TextLabel", { Parent = card, Position = UDim2.fromOffset(16, 75), Size = UDim2.new(1, -32, 0, 80), BackgroundTransparency = 1, Text = "⭐ No Key System (Instant execution)\n⭐ Access to exclusive, gamebreaking features\n⭐ Respected+ roles & priority support in Discord\n⭐ Supports development of Acro Hub!", TextColor3 = txt, Font = Enum.Font.GothamMedium, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left, TextYAlignment = Enum.TextYAlignment.Top, TextWrapped = true, TextTransparency = 1 })
+
+    local buybtn = mk("TextButton", { Parent = card, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -16), Size = UDim2.new(1, -32, 0, 36), BackgroundColor3 = elem, BorderSizePixel = 0, AutoButtonColor = false, Text = "Copy Premium Purchase Link", TextColor3 = goldc, Font = Enum.Font.GothamBold, TextSize = 12, BackgroundTransparency = 1, TextTransparency = 1 })
+    corner(buybtn, 4)
+    local buybtns = strokey(buybtn, line, 1)
+    buybtns.Transparency = 1
+
+    local function animateIn()
+        tw:Create(shade, TweenInfo.new(0.3), {BackgroundTransparency = 0.6}):Play()
+        tw:Create(card, TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.fromScale(0.5, 0.5), BackgroundTransparency = 0}):Play()
+        tw:Create(cards, TweenInfo.new(0.4), {Transparency = 0}):Play()
+        for _, v in ipairs(card:GetDescendants()) do
+            if v:IsA("TextLabel") or v:IsA("TextButton") then tw:Create(v, TweenInfo.new(0.3), {TextTransparency = 0}):Play() end
+            if v:IsA("ImageLabel") or v:IsA("ImageButton") then tw:Create(v, TweenInfo.new(0.3), {ImageTransparency = 0}):Play() end
+            if v:IsA("Frame") and v ~= card and v ~= shade then tw:Create(v, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play() end
+            if v:IsA("UIStroke") then tw:Create(v, TweenInfo.new(0.3), {Transparency = 0}):Play() end
+            if v == buybtn then tw:Create(v, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play() end
+        end
+    end
+
+    local function closePopup()
+        tw:Create(shade, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+        tw:Create(card, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(0.5, 0, 0.5, 12), BackgroundTransparency = 1}):Play()
+        tw:Create(cards, TweenInfo.new(0.2), {Transparency = 1}):Play()
+        for _, v in ipairs(card:GetDescendants()) do
+            if v:IsA("TextLabel") or v:IsA("TextButton") then tw:Create(v, TweenInfo.new(0.18), {TextTransparency = 1}):Play() end
+            if v:IsA("ImageLabel") or v:IsA("ImageButton") then tw:Create(v, TweenInfo.new(0.18), {ImageTransparency = 1}):Play() end
+            if v:IsA("Frame") and v ~= card and v ~= shade then tw:Create(v, TweenInfo.new(0.18), {BackgroundTransparency = 1}):Play() end
+            if v:IsA("UIStroke") then tw:Create(v, TweenInfo.new(0.18), {Transparency = 1}):Play() end
+            if v == buybtn then tw:Create(v, TweenInfo.new(0.18), {BackgroundTransparency = 1}):Play() end
+        end
+        task.delay(0.25, function() gui:Destroy() end)
+    end
+
+    closex.MouseButton1Click:Connect(closePopup)
+    closex.MouseEnter:Connect(function() tw:Create(closex, TweenInfo.new(0.12), {ImageColor3 = txt}):Play() end)
+    closex.MouseLeave:Connect(function() tw:Create(closex, TweenInfo.new(0.12), {ImageColor3 = sub}):Play() end)
+
+    buybtn.MouseEnter:Connect(function() tw:Create(buybtn, TweenInfo.new(0.15), {BackgroundColor3 = elemh, TextColor3 = puh}):Play() end)
+    buybtn.MouseLeave:Connect(function() tw:Create(buybtn, TweenInfo.new(0.15), {BackgroundColor3 = elem, TextColor3 = goldc}):Play() end)
+    buybtn.MouseButton1Down:Connect(function() tw:Create(buybtn, TweenInfo.new(0.06), {Size = UDim2.new(1, -32, 0, 34)}):Play() end)
+    buybtn.MouseButton1Up:Connect(function() tw:Create(buybtn, TweenInfo.new(0.1), {Size = UDim2.new(1, -32, 0, 36)}):Play() end)
+    buybtn.MouseButton1Click:Connect(function()
+        if setclipboard then setclipboard("https://www.roblox.com/game-pass/1899630668/Lifetime-Premium") end
+        buybtn.Text = "Link Copied!"
+        task.delay(1.5, function() closePopup() end)
+    end)
+
+    animateIn()
+end
+
 function lib:init(opts)
     opts = opts or {}
     local title = opts.Title or "Acro Hub"
@@ -441,7 +536,7 @@ function lib:init(opts)
                     Size = UDim2.new(1, 0, 0, 32),
                     BackgroundColor3 = colors.elem,
                     Text = bTxt,
-                    TextColor3 = colors.txt,
+                    TextColor3 = txtCol,
                     Font = Enum.Font.GothamMedium,
                     TextSize = 12,
                     TextTruncate = Enum.TextTruncate.AtEnd,
@@ -457,7 +552,18 @@ function lib:init(opts)
                     tw:Create(b, TweenInfo.new(0.1), {Size = UDim2.new(1, 0, 0, 32)}):Play()
                     cb()
                 end)
-            end
+            end\n
+                local isPrem = string.find(string.upper(bTxt), "%[PREMIUM%]") ~= nil
+                local txtCol = isPrem and colors.goldc or colors.sub
+                local oldCb = cb
+                cb = function(...)
+                    if isPrem and not _G.ownsPremiumLoader then
+                        lib:ShowPremiumPopup()
+                        return
+                    end
+                    return oldCb(...)
+                end
+
 
             function s:tog(tArgs)
                 tArgs = tArgs or {}
@@ -480,7 +586,7 @@ function lib:init(opts)
                     Size = UDim2.new(1, -60, 1, 0),
                     BackgroundTransparency = 1,
                     Text = tTxt,
-                    TextColor3 = colors.txt,
+                    TextColor3 = txtCol,
                     Font = Enum.Font.GothamMedium,
                     TextSize = 12,
                     TextTruncate = Enum.TextTruncate.AtEnd,
@@ -532,7 +638,18 @@ function lib:init(opts)
                     up(true)
                     cb(state)
                 end)
-            end
+            end\n
+                local isPrem = string.find(string.upper(tTxt), "%[PREMIUM%]") ~= nil
+                local txtCol = isPrem and colors.goldc or colors.sub
+                local oldCb = cb
+                cb = function(...)
+                    if isPrem and not _G.ownsPremiumLoader then
+                        lib:ShowPremiumPopup()
+                        return
+                    end
+                    return oldCb(...)
+                end
+
 
             function s:sldr(slArgs)
                 slArgs = slArgs or {}
@@ -557,7 +674,7 @@ function lib:init(opts)
                     Size = UDim2.new(1, -24, 0, 14),
                     BackgroundTransparency = 1,
                     Text = slTxt,
-                    TextColor3 = colors.txt,
+                    TextColor3 = txtCol,
                     Font = Enum.Font.GothamMedium,
                     TextSize = 12,
                     TextTruncate = Enum.TextTruncate.AtEnd,
@@ -570,7 +687,7 @@ function lib:init(opts)
                     Size = UDim2.new(1, -24, 0, 14),
                     BackgroundTransparency = 1,
                     Text = tostring(def),
-                    TextColor3 = colors.sub,
+                    TextColor3 = txtCol,
                     Font = Enum.Font.Gotham,
                     TextSize = 11,
                     TextXAlignment = Enum.TextXAlignment.Right
@@ -632,7 +749,18 @@ function lib:init(opts)
                 end)
                 
                 set(def)
-            end
+            end\n
+                local isPrem = string.find(string.upper(sTxt), "%[PREMIUM%]") ~= nil
+                local txtCol = isPrem and colors.goldc or colors.sub
+                local oldCb = cb
+                cb = function(...)
+                    if isPrem and not _G.ownsPremiumLoader then
+                        lib:ShowPremiumPopup()
+                        return
+                    end
+                    return oldCb(...)
+                end
+
             
             function s:lbl(lTxt)
                 c("TextLabel", {
@@ -681,7 +809,7 @@ function lib:init(opts)
                     Size = UDim2.new(1, -24, 0, 32),
                     BackgroundTransparency = 1,
                     Text = dTxt .. " - " .. tostring(default),
-                    TextColor3 = colors.txt,
+                    TextColor3 = txtCol,
                     Font = Enum.Font.GothamMedium,
                     TextSize = 12,
                     TextTruncate = Enum.TextTruncate.AtEnd,
@@ -715,15 +843,15 @@ function lib:init(opts)
                             Size = UDim2.new(1, 0, 0, 24),
                             BackgroundColor3 = colors.elem,
                             Text = tostring(opt),
-                            TextColor3 = colors.sub,
+                            TextColor3 = txtCol,
                             Font = Enum.Font.Gotham,
                             TextSize = 11,
                             AutoButtonColor = false,
                             LayoutOrder = i
                         })
                         
-                        oBtn.MouseEnter:Connect(function() tw:Create(oBtn, TweenInfo.new(0.15), {TextColor3 = colors.txt, BackgroundColor3 = colors.elemh}):Play() end)
-                        oBtn.MouseLeave:Connect(function() tw:Create(oBtn, TweenInfo.new(0.15), {TextColor3 = colors.sub, BackgroundColor3 = colors.elem}):Play() end)
+                        oBtn.MouseEnter:Connect(function() tw:Create(oBtn, TweenInfo.new(0.15), {TextColor3 = txtCol, BackgroundColor3 = colors.elemh}):Play() end)
+                        oBtn.MouseLeave:Connect(function() tw:Create(oBtn, TweenInfo.new(0.15), {TextColor3 = txtCol, BackgroundColor3 = colors.elem}):Play() end)
                         
                         oBtn.MouseButton1Click:Connect(function()
                             expanded = false
@@ -766,4 +894,15 @@ function lib:init(opts)
     return win
 end
 
-return lib
+return lib\n
+                local isPrem = string.find(string.upper(dTxt), "%[PREMIUM%]") ~= nil
+                local txtCol = isPrem and colors.goldc or colors.sub
+                local oldCb = cb
+                cb = function(...)
+                    if isPrem and not _G.ownsPremiumLoader then
+                        lib:ShowPremiumPopup()
+                        return
+                    end
+                    return oldCb(...)
+                end
+
