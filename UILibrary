@@ -60,7 +60,7 @@ end
 function lib:ShowPremiumPopup()
     local tw = game:GetService("TweenService")
     local gui = Instance.new("ScreenGui")
-    gui.Name = "\0"
+    gui.Name = "AcroHubPremium"
     local ok = pcall(function() gui.Parent = game:GetService("CoreGui") end)
     if not ok then gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui") end
     gui.IgnoreGuiInset = true
@@ -526,6 +526,67 @@ function lib:init(opts)
 
             local s = {}
 
+            function s:box(bArgs)
+                bArgs = bArgs or {}
+                local bTxt = bArgs.Name or "Input"
+                local bPlaceholder = bArgs.Placeholder or "Enter text..."
+                local cb = bArgs.Callback or function() end
+
+                local b = c("Frame", {
+                    Parent = sec,
+                    Size = UDim2.new(1, 0, 0, 40),
+                    BackgroundColor3 = colors.elem,
+                    BackgroundTransparency = 1
+                })
+                
+                local lbl = c("TextLabel", {
+                    Parent = b,
+                    Size = UDim2.new(1, 0, 0, 14),
+                    Position = UDim2.new(0, 4, 0, 0),
+                    BackgroundTransparency = 1,
+                    Text = bTxt,
+                    TextColor3 = colors.txt,
+                    Font = Enum.Font.GothamMedium,
+                    TextSize = 12,
+                    TextXAlignment = Enum.TextXAlignment.Left
+                })
+                
+                local bg = c("Frame", {
+                    Parent = b,
+                    Size = UDim2.new(1, 0, 0, 24),
+                    Position = UDim2.new(0, 0, 0, 16),
+                    BackgroundColor3 = colors.elem
+                })
+                c("UICorner", {Parent = bg, CornerRadius = UDim.new(0, 4)})
+                local stroke = c("UIStroke", {Parent = bg, Color = colors.line, Thickness = 1})
+
+                local input = c("TextBox", {
+                    Parent = bg,
+                    Size = UDim2.new(1, -12, 1, 0),
+                    Position = UDim2.new(0, 6, 0, 0),
+                    BackgroundTransparency = 1,
+                    Text = "",
+                    PlaceholderText = bPlaceholder,
+                    TextColor3 = colors.txt,
+                    PlaceholderColor3 = colors.sub,
+                    Font = Enum.Font.Gotham,
+                    TextSize = 12,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    ClearTextOnFocus = false
+                })
+
+                input.Focused:Connect(function()
+                    tw:Create(stroke, TweenInfo.new(0.2), {Color = colors.accent}):Play()
+                end)
+                input.FocusLost:Connect(function(ep)
+                    tw:Create(stroke, TweenInfo.new(0.2), {Color = colors.line}):Play()
+                    if ep then
+                        cb(input.Text)
+                        if bArgs.ClearOnFocusLost then input.Text = "" end
+                    end
+                end)
+            end
+
             function s:btn(bArgs)
                 bArgs = bArgs or {}
                 local bTxt = bArgs.Name or "Button"
@@ -765,6 +826,38 @@ function lib:init(opts)
             end
 
             
+            function s:para(pArgs)
+                pArgs = pArgs or {}
+                local title = pArgs.Title or ""
+                local text = pArgs.Text or ""
+                local fullStr = title .. "\n" .. text
+                if title == "" then fullStr = text end
+
+                local lbl = c("TextLabel", {
+                    Parent = sec,
+                    Size = UDim2.new(1, 0, 0, 0),
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    BackgroundTransparency = 1,
+                    Text = fullStr,
+                    TextColor3 = colors.sub,
+                    Font = Enum.Font.Gotham,
+                    TextSize = 12,
+                    TextWrapped = true,
+                    TextXAlignment = Enum.TextXAlignment.Left
+                })
+                
+                return {
+                    Set = function(self, newArgs)
+                        local t = newArgs.Title or ""
+                        local txt = newArgs.Text or ""
+                        local fs = t .. "\n" .. txt
+                        if t == "" then fs = txt end
+                        lbl.Text = fs
+                    end,
+                    Instance = lbl
+                }
+            end
+
             function s:lbl(lTxt)
                 c("TextLabel", {
                     Parent = sec,
