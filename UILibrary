@@ -159,12 +159,18 @@ function lib:init(opts)
 
     pcall(function()
         for _, v in pairs(cg:GetChildren()) do
-            if v.Name == "AcroUI" then v:Destroy() end
+            if v.Name == "AcroUI" then 
+                if _G.AcroUICleanup then pcall(_G.AcroUICleanup) end
+                v:Destroy() 
+            end
         end
     end)
     pcall(function()
         for _, v in pairs(game.Players.LocalPlayer:WaitForChild("PlayerGui"):GetChildren()) do
-            if v.Name == "AcroUI" then v:Destroy() end
+            if v.Name == "AcroUI" then 
+                if _G.AcroUICleanup then pcall(_G.AcroUICleanup) end
+                v:Destroy() 
+            end
         end
     end)
 
@@ -369,6 +375,13 @@ function lib:init(opts)
                 renderConn:Disconnect()
                 renderConn = nil
             end
+        end
+    end
+
+    _G.AcroUICleanup = function()
+        if renderConn then
+            renderConn:Disconnect()
+            renderConn = nil
         end
     end
 
