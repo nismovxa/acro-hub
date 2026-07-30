@@ -231,7 +231,13 @@ function lib:init(opts)
         Font = Enum.Font.GothamBold,
         TextSize = 13
     })
-    cls.MouseButton1Click:Connect(function() gui:Destroy() end)
+    cls.MouseButton1Click:Connect(function()
+        if renderConn then
+            renderConn:Disconnect()
+            renderConn = nil
+        end
+        gui:Destroy()
+    end)
     cls.MouseEnter:Connect(function() tw:Create(cls, TweenInfo.new(0.15), {TextColor3 = Color3.fromRGB(230, 90, 90)}):Play() end)
     cls.MouseLeave:Connect(function() tw:Create(cls, TweenInfo.new(0.15), {TextColor3 = colors.sub}):Play() end)
 
@@ -341,16 +347,41 @@ function lib:init(opts)
     mobT.Visible = uis.TouchEnabled
 
     local shown = true
-    mobT.MouseButton1Click:Connect(function()
-        shown = not shown
+
+    local function updateMouseLock()
+        if shown then
+            uis.MouseBehavior = Enum.MouseBehavior.Default
+            uis.MouseIconEnabled = true
+        end
+    end
+
+    local renderConn
+    local function setGuiState(visible)
+        shown = visible
         bg.Visible = shown
+        if shown then
+            updateMouseLock()
+            if not renderConn then
+                renderConn = game:GetService("RunService").RenderStepped:Connect(updateMouseLock)
+            end
+        else
+            if renderConn then
+                renderConn:Disconnect()
+                renderConn = nil
+            end
+        end
+    end
+
+    setGuiState(true)
+
+    mobT.MouseButton1Click:Connect(function()
+        setGuiState(not shown)
     end)
     dragify(mobT, mobT)
 
     uis.InputBegan:Connect(function(inp, proc)
         if not proc and inp.KeyCode == Enum.KeyCode.LeftControl then
-            shown = not shown
-            bg.Visible = shown
+            setGuiState(not shown)
         end
     end)
 
