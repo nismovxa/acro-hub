@@ -379,8 +379,10 @@ function lib:init(opts)
     end)
     dragify(mobT, mobT)
 
+    win.ToggleKey = Enum.KeyCode.LeftControl
+
     uis.InputBegan:Connect(function(inp, proc)
-        if not proc and inp.KeyCode == Enum.KeyCode.LeftControl then
+        if not proc and inp.KeyCode == win.ToggleKey then
             setGuiState(not shown)
         end
     end)
