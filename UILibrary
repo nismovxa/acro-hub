@@ -171,7 +171,9 @@ function lib:init(opts)
     local gui = c("ScreenGui", {
         Name = "AcroUI",
         ZIndexBehavior = Enum.ZIndexBehavior.Global,
-        ResetOnSpawn = false
+        ResetOnSpawn = false,
+        DisplayOrder = 999999999,
+        IgnoreGuiInset = true
     })
     
     local ok, _ = pcall(function() gui.Parent = cg end)
