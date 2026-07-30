@@ -660,6 +660,48 @@ function lib:init(opts)
                 end)
             end
 
+            function s:bind(bArgs)
+                bArgs = bArgs or {}
+                local bTxt = bArgs.Name or "Keybind"
+                local def = bArgs.Default or Enum.KeyCode.E
+                local cb = bArgs.Callback or function() end
+                
+                local currentKey = def
+                local binding = false
+
+                local b = c("TextButton", {
+                    Parent = sec,
+                    Size = UDim2.new(1, 0, 0, 32),
+                    BackgroundColor3 = colors.elem,
+                    Text = bTxt .. ": " .. currentKey.Name,
+                    TextColor3 = colors.sub,
+                    Font = Enum.Font.GothamMedium,
+                    TextSize = 12,
+                    TextTruncate = Enum.TextTruncate.AtEnd,
+                    AutoButtonColor = false
+                })
+                c("UICorner", {Parent = b, CornerRadius = UDim.new(0, 4)})
+                c("UIStroke", {Parent = b, Color = colors.line, Thickness = 1})
+
+                b.MouseEnter:Connect(function() tw:Create(b, TweenInfo.new(0.15), {BackgroundColor3 = colors.elemh}):Play() end)
+                b.MouseLeave:Connect(function() tw:Create(b, TweenInfo.new(0.15), {BackgroundColor3 = colors.elem}):Play() end)
+                b.MouseButton1Down:Connect(function() tw:Create(b, TweenInfo.new(0.1), {Size = UDim2.new(1, -4, 0, 28)}):Play() end)
+                b.MouseButton1Up:Connect(function()
+                    tw:Create(b, TweenInfo.new(0.1), {Size = UDim2.new(1, 0, 0, 32)}):Play()
+                    binding = true
+                    b.Text = bTxt .. ": ..."
+                end)
+
+                uis.InputBegan:Connect(function(inp)
+                    if binding and inp.UserInputType == Enum.UserInputType.Keyboard then
+                        binding = false
+                        currentKey = inp.KeyCode
+                        b.Text = bTxt .. ": " .. currentKey.Name
+                        cb(currentKey)
+                    end
+                end)
+            end
+
             function s:tog(tArgs)
                 tArgs = tArgs or {}
                 local tTxt = tArgs.Name or "Toggle"
