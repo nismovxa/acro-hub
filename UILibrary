@@ -678,9 +678,25 @@ function lib:init(opts)
                 local bTxt = bArgs.Name or "Keybind"
                 local def = bArgs.Default or Enum.KeyCode.E
                 local cb = bArgs.Callback or function() end
+                local flag = bArgs.Flag
+                
+                if flag and _G.AcroHub_GetConfig then
+                    local saved = _G.AcroHub_GetConfig(flag)
+                    if saved ~= nil then def = saved end
+                end
+
+                local oldCb = cb
+                cb = function(val, ...)
+                    if flag and _G.AcroHub_SetConfig then
+                        _G.AcroHub_SetConfig(flag, val)
+                    end
+                    return oldCb(val, ...)
+                end
                 
                 local currentKey = def
                 local binding = false
+
+                task.spawn(function() oldCb(currentKey) end)
 
                 local b = c("TextButton", {
                     Parent = sec,
@@ -725,8 +741,16 @@ function lib:init(opts)
             function s:tog(tArgs)
                 tArgs = tArgs or {}
                 local tTxt = tArgs.Name or "Toggle"
-                local def = tArgs.Default or false
+                local def = tArgs.Default
+                if type(def) == "nil" then def = false end
                 local cb = tArgs.Callback or function() end
+                local flag = tArgs.Flag
+                
+                if flag and _G.AcroHub_GetConfig then
+                    local saved = _G.AcroHub_GetConfig(flag)
+                    if saved ~= nil then def = saved end
+                end
+
                 local isPrem = string.find(string.upper(tTxt), "PREMIUM") ~= nil
                 local txtCol = isPrem and colors.goldc or colors.sub
                 local oldCb = cb
@@ -739,6 +763,9 @@ function lib:init(opts)
                         up(true)
                         lib:ShowPremiumPopup()
                         return
+                    end
+                    if flag and _G.AcroHub_SetConfig then
+                        _G.AcroHub_SetConfig(flag, state)
                     end
                     return oldCb(...)
                 end
@@ -810,6 +837,8 @@ function lib:init(opts)
                     up(true)
                     cb(state)
                 end)
+                
+                task.spawn(function() oldCb(state) end)
             end
 
             function s:sldr(slArgs)
@@ -819,15 +848,25 @@ function lib:init(opts)
                 local max = slArgs.Max or 100
                 local def = slArgs.Default or min
                 local cb = slArgs.Callback or function() end
+                local flag = slArgs.Flag
+
+                if flag and _G.AcroHub_GetConfig then
+                    local saved = _G.AcroHub_GetConfig(flag)
+                    if saved ~= nil then def = saved end
+                end
+
                 local isPrem = string.find(string.upper(slTxt), "PREMIUM") ~= nil
                 local txtCol = isPrem and colors.goldc or colors.sub
                 local oldCb = cb
-                cb = function(...)
+                cb = function(v, ...)
                     if isPrem and not _G.ownsPremiumLoader then
                         lib:ShowPremiumPopup()
                         return
                     end
-                    return oldCb(...)
+                    if flag and _G.AcroHub_SetConfig then
+                        _G.AcroHub_SetConfig(flag, v)
+                    end
+                    return oldCb(v, ...)
                 end
 
                 local f = c("Frame", {
@@ -976,15 +1015,25 @@ function lib:init(opts)
                 local options = dArgs.Options or {}
                 local default = dArgs.Default or ""
                 local cb = dArgs.Callback or function() end
+                local flag = dArgs.Flag
+
+                if flag and _G.AcroHub_GetConfig then
+                    local saved = _G.AcroHub_GetConfig(flag)
+                    if saved ~= nil then default = saved end
+                end
+
                 local isPrem = string.find(string.upper(dTxt), "PREMIUM") ~= nil
                 local txtCol = isPrem and colors.goldc or colors.txt
                 local oldCb = cb
-                cb = function(...)
+                cb = function(val, ...)
                     if isPrem and not _G.ownsPremiumLoader then
                         lib:ShowPremiumPopup()
                         return
                     end
-                    return oldCb(...)
+                    if flag and _G.AcroHub_SetConfig then
+                        _G.AcroHub_SetConfig(flag, val)
+                    end
+                    return oldCb(val, ...)
                 end
                 
                 local dropApi = {}
