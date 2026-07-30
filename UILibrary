@@ -693,11 +693,18 @@ function lib:init(opts)
                 end)
 
                 uis.InputBegan:Connect(function(inp)
-                    if binding and inp.UserInputType == Enum.UserInputType.Keyboard then
-                        binding = false
-                        currentKey = inp.KeyCode
-                        b.Text = bTxt .. ": " .. currentKey.Name
-                        cb(currentKey)
+                    if binding then
+                        if inp.UserInputType == Enum.UserInputType.Keyboard then
+                            binding = false
+                            currentKey = inp.KeyCode
+                            b.Text = bTxt .. ": " .. currentKey.Name
+                            cb(currentKey)
+                        elseif string.find(inp.UserInputType.Name, "MouseButton") then
+                            binding = false
+                            currentKey = inp.UserInputType
+                            b.Text = bTxt .. ": " .. currentKey.Name
+                            cb(currentKey)
+                        end
                     end
                 end)
             end
