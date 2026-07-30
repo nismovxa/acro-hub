@@ -378,10 +378,15 @@ function lib:init(opts)
         end
     end
 
+    local togConn
     _G.AcroUICleanup = function()
         if renderConn then
             renderConn:Disconnect()
             renderConn = nil
+        end
+        if togConn then
+            togConn:Disconnect()
+            togConn = nil
         end
     end
 
@@ -394,7 +399,7 @@ function lib:init(opts)
 
     win.ToggleKey = Enum.KeyCode.LeftControl
 
-    uis.InputBegan:Connect(function(inp, proc)
+    togConn = uis.InputBegan:Connect(function(inp, proc)
         if not proc and inp.KeyCode == win.ToggleKey then
             setGuiState(not shown)
         end
