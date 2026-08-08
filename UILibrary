@@ -353,41 +353,17 @@ function lib:init(opts)
     mobT.Visible = uis.TouchEnabled
 
     local shown = true
-
-    local function updateMouseLock()
-        if shown then
-            uis.MouseBehavior = Enum.MouseBehavior.Default
-            uis.MouseIconEnabled = true
-        end
-    end
-
-    local renderConn
-    local function setGuiState(visible)
-        shown = visible
-        bg.Visible = shown
-        if shown then
-            updateMouseLock()
-            if not renderConn then
-                renderConn = game:GetService("RunService").RenderStepped:Connect(updateMouseLock)
-            end
-        else
-            if renderConn then
-                renderConn:Disconnect()
-                renderConn = nil
-            end
-        end
-    end
-
-    local togConn
     _G.AcroUICleanup = function()
-        if renderConn then
-            renderConn:Disconnect()
-            renderConn = nil
-        end
         if togConn then
             togConn:Disconnect()
             togConn = nil
         end
+    end
+
+    local function setGuiState(visible)
+        shown = visible
+        bg.Visible = shown
+        if modalUnlocker then modalUnlocker.Modal = shown end
     end
 
     setGuiState(true)
